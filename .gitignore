@@ -3,3 +3,15 @@
 ################################################################################
 
 /NhVsEf/.vs/NhVsEf/v14
+/NhVsEf/Core/obj/Debug
+/NhVsEf/Core/bin/Debug
+/NhVsEf/EF/bin/Debug
+/NhVsEf/EF/obj/Debug
+/NhVsEf/Models/bin/Debug
+/NhVsEf/Models/obj/Debug
+/NhVsEf/NHibernate/bin/Debug
+/NhVsEf/NHibernate/obj/Debug
+/NhVsEf/packages
+/NhVsEf/Tests/bin/Debug
+/NhVsEf/Tests/obj/Debug
+*.zip
