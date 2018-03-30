@@ -5,6 +5,7 @@ using Common;
 using EF;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using NH;
 using Xunit;
 
 namespace Tests
@@ -22,24 +23,12 @@ namespace Tests
         [Fact]
         public void EF_Test1()
         {
+            var countryId = DoDataSeed().Id;
             IUnitOfWorkFactory factory = new EfUnitOfWorkFactory();
             using (var uow = factory.Create())
             {
                 var repository = new Repository<Country>(uow.DbContext);
-
-                var dataSeed = new Country()
-                {
-                    Name = "USA",
-                    Cities = new List<City>()
-                    {
-                        new City() { Name = "NY"},
-                        new City() { Name = "LA"},
-                    }
-                };
-                repository.Create(dataSeed);
-                uow.SaveChanges();
-
-                var country = repository.Where(x => x.Id == 1).FirstOrDefault();
+                var country = repository.Where(x => x.Id == countryId).Include(x => x.Cities).FirstOrDefault();
                 Assert.NotNull(country);
                 Assert.True(country.Cities.Any());
 
@@ -63,7 +52,7 @@ namespace Tests
             using (var uow = factory.Create())
             {
                 var repository = new Repository<Country>(uow.DbContext);
-                var country = repository.Where(x => x.Id == 1).Include(x => x.Cities).FirstOrDefault();
+                var country = repository.Where(x => x.Id == countryId).Include(x => x.Cities).FirstOrDefault();
                 Assert.NotNull(country);
                 Assert.True(!country.Cities.Any());
 
@@ -71,6 +60,49 @@ namespace Tests
             }
         }
 
-       
+        private static Country DoDataSeed()
+        {
+            IUnitOfWorkFactory factory = new EfUnitOfWorkFactory();
+            using (var uow = factory.Create())
+            {
+                var repository = new Repository<Country>(uow.DbContext);
+                var dataSeed = new Country()
+                {
+                    Name = "USA",
+                    Cities = new List<City>()
+                };
+                dataSeed.Cities.Add(new City() { Country = dataSeed, Name = "NY" });
+                dataSeed.Cities.Add(new City() { Country = dataSeed, Name = "LA" });
+                repository.Create(dataSeed);
+                return dataSeed;
+            }
+        }
+
+        [Fact]
+        public void NH_Test1()
+        {
+            var countryId = DoDataSeed().Id;
+            IUnitOfWorkFactory factory = new NhUnitOfWorkFactory();
+            using (var uow = factory.Create())
+            {
+                var repository = new Repository<Country>(uow.DbContext);
+                var country = repository.Where(x => x.Id == countryId).FirstOrDefault();
+                Assert.NotNull(country);
+                Assert.True(country.Cities.Any());
+
+                country.Cities.Clear();
+            }
+
+            using (var uow = factory.Create())
+            {
+                var repository = new Repository<Country>(uow.DbContext);
+                var country = repository.Where(x => x.Id == countryId).Include(x => x.Cities).FirstOrDefault();
+                Assert.NotNull(country);
+                Assert.True(!country.Cities.Any());
+
+                repository.Delete(country);
+            }
+        }
+
     }
 }
