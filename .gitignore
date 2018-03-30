@@ -16,3 +16,11 @@
 /NhVsEf/Tests/obj/Debug
 *.zip
 /moviedb
+/NetCore/NhVsEf/.vs
+/NetCore/NhVsEf/Common/obj
+/NetCore/NhVsEf/Common/bin/Debug/netcoreapp2.0
+/NetCore/NhVsEf/EF/obj
+/NetCore/NhVsEf/EF/bin/Debug/netcoreapp2.0
+**bin**
+**obj**
+/NhVsEf/.vs/NhVsEf/v15
